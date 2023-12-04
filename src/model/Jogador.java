@@ -1,17 +1,26 @@
 package model;
 
+import java.util.Scanner;
+
 public class Jogador {
     
     String name;
     int pontuacao = 0;
-    Cartas[] cartas;
-    Cartas[] cartasColetadas;
-    
+    Carta[] cartas;
+
+    public Jogador() {
+        this.name = "";
+    }
+
     public Jogador(String name) {
         this.name = name;
     }
 
-    public String getName() {
+    public Jogador getJogador() {
+        return this;
+    }
+
+    public String getNome() {
         return name;
     }
 
@@ -19,27 +28,103 @@ public class Jogador {
         return pontuacao;
     }
 
-    public Cartas[] getCartas() {
+    public Carta[] getCarta() {
         return cartas;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getCartasDoJogador() {
+        return cartas.length;
     }
 
-    public void setPontuacao(int pontuacao) {
-        this.pontuacao = pontuacao;
+    public void addPontuacao(int pontuacao) {
+        this.pontuacao += pontuacao;
     }
 
-    public void setCartas(Cartas[] cartas) {
-        this.cartas = cartas;
+    public void getCartasIniciais(Baralho baralho, int numeroCartas) {
+        for (int i = 0; i < numeroCartas; i++) {
+            Carta carta = baralho.retirarCarta();
+
+            if (carta != null) {
+                addCarta(carta);
+            } else {
+                System.out.println("Baralho vazio. Não foi possível obter mais cartas.");
+                break;
+            }
+        }
     }
 
-    public Cartas[] getCartasColetadas() {
-        return cartasColetadas;
+    public void getCartasIniciais(Baralho baralho) {
+        getCartasIniciais(baralho, 12);
     }
 
-    public void setCartasColetadas(Cartas[] cartasColetadas) {
-        this.cartasColetadas = cartasColetadas;
+    public void addCarta(Carta novaCarta) {
+        if(cartas == null){
+            cartas = new Carta[1];
+            cartas[0] = novaCarta;
+        } else {
+            Carta[] novoArray = new Carta[cartas.length + 1];
+
+            System.arraycopy(cartas, 0, novoArray, 0, cartas.length);
+            novoArray[cartas.length] = novaCarta;
+
+            cartas = novoArray;
+        }
+    }
+
+    public void jogarCarta(Tabuleiro tabuleiro) {
+        Scanner scanner = new Scanner(System.in);
+        exibirCartas();
+        while (true) {
+            System.out.println("\nCarta escolhida: ");
+
+            if (scanner.hasNextInt()) {
+                int numeroEscolhido = scanner.nextInt();
+                int posicao = encontrarPosicaoCarta(numeroEscolhido);
+
+                if (posicao != -1) {
+                    System.out.println("\nCarta " + numeroEscolhido + " jogada!\n");
+                    tabuleiro.adicionarCartaSelecionada(cartas[posicao], getJogador());
+                    cartas = removerCarta(cartas, posicao);
+                    break;
+                } else {
+                    System.out.println("Carta não encontrada, tente novamente.");
+                }
+            } else {
+                System.out.println("Por favor, digite apenas números inteiros.");
+                scanner.next();
+            }
+        }
+}
+
+    private void exibirCartas() {
+        System.out.println("\nCartas na mão do jogador:");
+        System.out.println();
+        for (Carta carta : cartas) {
+            if (carta != null) {
+                System.out.print("[ " + carta.numero + " ]");
+            }
+        }
+        System.out.println();
+    }
+
+    private int encontrarPosicaoCarta(int numeroCarta) {
+        for (int i = 0; i < cartas.length; i++) {
+            if (cartas[i] != null && cartas[i].numero == numeroCarta) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private Carta[] removerCarta(Carta[] array, int posicao) {
+        Carta[] novoArray = new Carta[array.length - 1];
+        System.arraycopy(array, 0, novoArray, 0, posicao);
+        System.arraycopy(array, posicao + 1, novoArray, posicao, array.length - posicao - 1);
+        return novoArray;
+    }
+
+    @Override
+    public String toString() {
+        return "Jogador " + name + " - Pontuacao:" + pontuacao;
     }
 }

@@ -1,34 +1,40 @@
 package model;
 
+import java.util.Arrays;
+
 public class Baralho {
-    
-    Cartas[] cartas;
 
-    public void createBaralho()
-    {
-        Cartas[] baralho = new Cartas[109];
+    private Carta[] cartas;
+
+    public void createBaralho() {
+        this.cartas = new Carta[109];
         for (int i = 0; i < 109; i++) {
-            baralho[i] = new Cartas(i+1);
+            this.cartas[i] = new Carta(i + 1);
         }
-        
-        baralho = this.embaralhaCartas(baralho);
 
-        this.cartas = baralho;
+        this.embaralhaCarta();
     }
 
-    public Cartas[] getCartas() {
-        return cartas;
-    }
-
-    public Cartas[] embaralhaCartas(Cartas[] cartas) {
-        
+    public void embaralhaCarta() {
         for (int i = 0; i < cartas.length; i++) {
             int randomIndex = (int) (Math.random() * cartas.length);
-            Cartas temp = cartas[i];
+            Carta temp = cartas[i];
             cartas[i] = cartas[randomIndex];
             cartas[randomIndex] = temp;
         }
+    }
 
-        return cartas;
+    public Carta retirarCarta() {
+        if (cartas.length > 0) {
+            Carta cartaRetirada = cartas[cartas.length - 1];
+            cartas = Arrays.copyOf(cartas, cartas.length - 1);
+            return cartaRetirada;
+        } else {
+            return null;
+        }
+    }
+
+    public void getTamanho() {
+        System.out.println(cartas.length);
     }
 }
