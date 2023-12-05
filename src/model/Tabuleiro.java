@@ -75,6 +75,8 @@ public class Tabuleiro {
     public void coletarTodasAsCartas(Jogador jogador, int linhaNumero) {
         int pontuacaoLinha = this.pontuacoesLinha(linhaNumero);
         jogador.addPontuacao(pontuacaoLinha);
+        Carta[] cartasLinha = Arrays.copyOf(tabuleiro[linhaNumero], tabuleiro[linhaNumero].length);
+        jogador.adicionarCartasColetadas(cartasLinha);
         Arrays.fill(tabuleiro[linhaNumero], null);
     }
 
@@ -130,6 +132,7 @@ public class Tabuleiro {
     private int encontrarLinhaParaCarta(Carta cartaSelecionada) {
         int menorDiferenca = Integer.MAX_VALUE;
         int linhaCorreta = 0;
+        boolean achouLinha = false;
 
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
@@ -138,12 +141,35 @@ public class Tabuleiro {
                     if (diferenca < menorDiferenca) {
                         menorDiferenca = diferenca;
                         linhaCorreta = i;
+                        achouLinha = true;
                     }
                 }
             }
         }
 
+        if(!achouLinha) {
+            linhaCorreta = getLinhaComMaiorNúmero(tabuleiro);
+        }
+
         return linhaCorreta;
+    }
+
+    private static int getLinhaComMaiorNúmero(Carta[][] tabuleiro) {
+        int largestNumber = Integer.MIN_VALUE, linha = -1;
+
+        for (int i = 0; i < tabuleiro.length; i++) {
+            for (int j = tabuleiro[i].length - 1; j >= 0; j--) {
+                if (tabuleiro[i][j] != null) {
+                    if (tabuleiro[i][j].numero > largestNumber) {
+                        largestNumber = tabuleiro[i][j].numero;
+                        linha = i;
+                    }
+                    break;
+                }
+            }
+        }
+
+        return linha;
     }
 
     public void pontuacoesJogadores(Jogador jogadores[]) {
@@ -194,6 +220,7 @@ public class Tabuleiro {
 
         for (int i = 0 ; i < jogadores.length; i++) {
             System.out.println(jogadores[i].toString());
+            System.out.println(jogadores[i].getCartasColetadasAsString());
         }
     }
 

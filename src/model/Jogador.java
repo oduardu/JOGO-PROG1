@@ -7,6 +7,8 @@ public class Jogador {
     String name;
     int pontuacao = 0;
     Carta[] cartas;
+    private Carta[] cartasColetadas = new Carta[109];
+    private int posicaoCartasColetadas = 0;
 
     public Jogador() {
         this.name = "";
@@ -122,6 +124,24 @@ public class Jogador {
         System.arraycopy(array, posicao + 1, novoArray, posicao, array.length - posicao - 1);
         return novoArray;
     }
+
+    public void adicionarCartasColetadas(Carta[] cartas) {
+        System.arraycopy(cartas, 0, cartasColetadas, posicaoCartasColetadas, cartas.length);
+        posicaoCartasColetadas += cartas.length;
+    }
+
+    public String getCartasColetadasAsString() {
+        String cartasColetadasStr = "";
+
+        for (Carta carta : cartasColetadas) {
+            if (carta == null)
+                continue;
+            cartasColetadasStr += "[ " + carta.numero + " ] ";
+        }
+
+        return "Cartas Coletadas: " + cartasColetadasStr;
+    }
+
 
     @Override
     public String toString() {
